@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use Hash;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 class UserController extends Controller
 {
     public function updatePassword(Request $request, $id)
