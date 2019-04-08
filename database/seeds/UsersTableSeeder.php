@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $roles = ['admin','user'];
+        $roles = ['owner','cs','kasir'];
 
         foreach($roles as $role){
             $this->command->info('Creating Role '. strtoupper($role));
