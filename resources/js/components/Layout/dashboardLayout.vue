@@ -3,9 +3,12 @@
     wrap
   >
   <div class="background-all"></div>
+      <vue-topprogress ref="topProgress"></vue-topprogress>
+    <div v-if="loading == true"></div>
+    <div  v-else style="width: 100%;">
     <v-toolbar :class="{'sideActive': mini, 'sideDeactive':!mini, 'sideToggle':!drawer}" class="toolbarFixed">
         <v-toolbar-side-icon  @click.stop="showSide()"></v-toolbar-side-icon>
-        <v-toolbar-title>Title</v-toolbar-title>
+        <v-toolbar-title>Atma Auto</v-toolbar-title>
     </v-toolbar>
     <v-navigation-drawer
       v-model="drawer"
@@ -23,7 +26,7 @@
           </v-list-tile-avatar>
 
           <v-list-tile-content>
-            <v-list-tile-title>John Leider</v-list-tile-title>
+            <v-list-tile-title>{{name}}</v-list-tile-title>
           </v-list-tile-content>
 
         </v-list-tile>
@@ -31,20 +34,11 @@
 
       <v-list class="pt-0" dense>
         <v-divider light></v-divider>
-
-        <v-list-tile
-          v-for="item in items"
-          :key="item.title"
-          @click="routerGoto(item.click)"
-        >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+         <v-list-tile @click="routerGoto('DashboardContent')"><v-list-tile-action><v-icon>dashboard</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Beranda</v-list-tile-title></v-list-tile-content></v-list-tile>
+         <v-list-tile @click="routerGoto('Cabang')"><v-list-tile-action><v-icon>dashboard</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Cabang</v-list-tile-title></v-list-tile-content></v-list-tile>
+         <v-list-tile @click="routerGoto('Supplier')"><v-list-tile-action><v-icon>lock</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Supplier</v-list-tile-title></v-list-tile-content></v-list-tile>
+         <v-list-tile @click="routerGoto('changePassword')"><v-list-tile-action><v-icon>lock</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Ubah Password</v-list-tile-title></v-list-tile-content></v-list-tile>
+         <v-list-tile @click="logoutDialog = true"><v-list-tile-action><v-icon>power_settings_new</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Keluar</v-list-tile-title></v-list-tile-content></v-list-tile>
       </v-list>
     </v-navigation-drawer>
      <!-- delete -->
@@ -66,15 +60,30 @@
             </transition>
             </main>
         </div>
+    </div>
   </v-layout>
 </template>
 <script>
+import { vueTopprogress } from 'vue-top-progress'
+
   export default {
+    components: {
+      vueTopprogress
+    },
     mounted () {
         this.cekSize()
+        this.getUser()
     },
     data () {
       return {
+        user: {},
+        loading: true,
+        roles: localStorage.getItem('role'),
+        name: localStorage.getItem('name'),
+        activeFirst: false,
+        wrongPassword: false,
+        leftNav: false,
+        showDropDown: false,
         logoutDialog: false,
         drawer: true,
         mini: false,
@@ -100,6 +109,32 @@
         window.removeEventListener('resize', this.handleResize)
     },
     methods:{
+    getUser () {
+        if (localStorage.getItem('name') !== null) {
+          this.loading = false
+          return
+        }
+        this.$refs.topProgress.start()
+        axios.get('/api/user', {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+          }
+        }).then(response => {
+          this.$refs.topProgress.done()
+          this.loading = false
+          if (response.data.status === 'Token is Expired' || response.data.userdata === null || response.data[0] === 'user_not_found') {
+            this.$router.push({ name: 'Logout' })
+          } else {
+            this.user = response.data.userdata
+            this.name = response.data.userdata.role.name
+            localStorage.setItem('name', this.user.detail.nama)
+            localStorage.setItem('id', this.user.id)
+          }
+        }).catch(error => {
+          console.log(error)
+          this.$router.push({ name: 'Logout' })
+        })
+      },
         routerGoto(name) {
             if(name == 'logoutDialog'){
                 this.logoutDialog = true

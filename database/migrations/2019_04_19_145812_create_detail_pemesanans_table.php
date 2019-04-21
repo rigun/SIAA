@@ -15,11 +15,11 @@ class CreateDetailPemesanansTable extends Migration
     {
         Schema::create('detail_pemesanans', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('code_sparepart');
+            $table->unsignedBigInteger('id_sparepart_cabang');
+            $table->foreign('id_sparepart_cabang')->references('id')->on('cabang_spareparts');
             $table->unsignedBigInteger('id_pemesanan');
-            $table->foreign('code_sparepart')->references('code')->on('spareparts');
             $table->foreign('id_pemesanan')->references('id')->on('pemesanans');
-          
+            $table->integer('total');
             $table->timestamps();
         });
     }

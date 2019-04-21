@@ -17,6 +17,7 @@
                 label="Username"
                 :error-messages="errorMsg"
                 required
+                @keyup.enter="submit()"
               ></v-text-field>
         </v-flex>
         <v-flex xs12>
@@ -28,6 +29,7 @@
             label="Password"
             :error-messages="errorMsg"
             @click:append="show = !show"
+            @keyup.enter="submit()"
           ></v-text-field>
         </v-flex>
           

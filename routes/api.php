@@ -20,6 +20,38 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/user', 'UserController@getAuthenticatedUser');
     Route::get('/', 'UserController@index');
     Route::post('/changepassword/{id}', 'UserController@updatePassword');
+
+    Route::get('/layanan','JasaServiceController@index');
+    Route::get('/layanan/{id}','JasaServiceController@show');
+    Route::post('/layanan','JasaServiceController@store');
+    Route::post('/layanan/{id}','JasaServiceController@update');
+    Route::delete('/layanan/{id}','JasaServiceController@destroy');
+
+    Route::get('/kendaraan','MotorController@index');
+    Route::get('/kendaraan/{id}','MotorController@show');
+    Route::post('/kendaraan','MotorController@store');
+    Route::post('/kendaraan/{id}','MotorController@update');
+    Route::delete('/kendaraan/{id}','MotorController@destroy');
+
+    Route::get('/cabang','CabangController@index');
+    Route::get('/branchEmployee/{id}','CabangController@employeeByBranch');
+    Route::get('/cabang/{id}','CabangController@show');
+    Route::post('/cabang','CabangController@store');
+    Route::post('/cabang/{id}','CabangController@update');
+    Route::delete('/cabang/{id}','CabangController@destroy');
+
+    Route::get('/pegawai','PegawaiController@index');
+    Route::get('/employeebyBranch/{branch_id}','PegawaiController@showByBranch');
+    Route::get('/pegawai/{id}','PegawaiController@show');
+    Route::post('/pegawai','PegawaiController@store');
+    Route::post('/pegawai/{id}','PegawaiController@update');
+    Route::delete('/pegawai/{id}','PegawaiController@destroy');
+    
+    Route::get('/supplier', 'SupplierController@index');
+    Route::post('/supplier', 'SupplierController@store');
+    Route::post('/supplier/{id}', 'SupplierController@update');
+    Route::delete('/supplier/{id}', 'SupplierController@destroy');
+
 });
 Route::group([
     'prefix' => 'auth'

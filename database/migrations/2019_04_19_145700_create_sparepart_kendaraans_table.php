@@ -14,11 +14,11 @@ class CreateSparepartKendaraansTable extends Migration
     public function up()
     {
         Schema::create('sparepart_kendaraans', function (Blueprint $table) {
-            $table->string('code_sparepart');
+            $table->string('kode_sparepart');
             $table->unsignedBigInteger('id_kendaraan');
-            $table->foreign('code_sparepart')->references('code')->on('spareparts');
+            $table->foreign('kode_sparepart')->references('kode')->on('spareparts');
             $table->foreign('id_kendaraan')->references('id')->on('motors');
-            $table->primary(['code_sparepart','id_kendaraan']);
+            $table->primary(['kode_sparepart','id_kendaraan']);
         });
     }
 

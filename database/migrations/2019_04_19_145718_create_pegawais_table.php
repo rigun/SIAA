@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCabangSparepartsTable extends Migration
+class CreatePegawaisTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateCabangSparepartsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cabang_spareparts', function (Blueprint $table) {
+        Schema::create('pegawais', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('code_sparepart');
-            $table->unsignedBigInteger('id_cabang');
-            $table->foreign('code_sparepart')->references('code')->on('spareparts');
+            $table->string('nama');
+            $table->string('alamat');
+            $table->string('no_telp');
+            $table->double('gaji');
+            $table->unsignedBigInteger('id_cabang')->nullable();
             $table->foreign('id_cabang')->references('id')->on('cabangs');
-            $table->integer('stock');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateCabangSparepartsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cabang_spareparts');
+        Schema::dropIfExists('pegawais');
     }
 }

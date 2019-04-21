@@ -17,6 +17,7 @@ class CreateDetailServicesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('id_service');
             $table->foreign('id_service')->references('id')->on('jasa_services');
+            $table->integer('jumlah');
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Role;
 use App\User;
+use App\Pegawai;
 class UsersTableSeeder extends Seeder
 {
     /**
@@ -27,6 +28,20 @@ class UsersTableSeeder extends Seeder
             $user->password = bcrypt('password');
             $user->role_id = $r->id;
             $user->save();
+
+            $pegawai = new Pegawai();
+            $pegawai->nama = $role;
+            $pegawai->alamat = $role;
+            $pegawai->no_telp = $role;
+            $pegawai->gaji = 1000000;
+            $pegawai->user_id = $user->id;
+            $pegawai->save();    
         }
+        $pegawai = new Pegawai();
+        $pegawai->nama = 'montir';
+        $pegawai->alamat = 'montir';
+        $pegawai->no_telp = 'montir';
+        $pegawai->gaji = 1000000;
+        $pegawai->save();
     }
 }

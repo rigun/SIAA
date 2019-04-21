@@ -18,6 +18,9 @@ class User extends Authenticatable implements JWTSubject
     public function role(){
         return $this->hasOne('App\Role','id','role_id');
     }
+    public function detail(){
+        return $this->belongsTo('App\Pegawai','id','user_id');
+    }
     public function getJWTIdentifier()
     {
       return $this->getKey();

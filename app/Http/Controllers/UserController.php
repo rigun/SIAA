@@ -76,7 +76,7 @@ class UserController extends Controller
         } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
-        $userdata = User::with('role')->where('id',$user->id)->first();
+        $userdata = User::with(['role','detail'])->where('id',$user->id)->first();
         return response()->json(compact('userdata'));
     }
 }

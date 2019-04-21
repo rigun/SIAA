@@ -15,7 +15,7 @@ class CreateCabangsTable extends Migration
     {
         Schema::create('cabangs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
+            $table->string('nama');
             $table->timestamps();
         });
     }
