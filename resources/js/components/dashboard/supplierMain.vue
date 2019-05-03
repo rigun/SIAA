@@ -38,6 +38,9 @@
                 <b-table-column field="nama" label="Nama" sortable>{{ props.row.nama }}</b-table-column>
                 <b-table-column field="no_telp" label="Nomor Telepon" sortable>{{ props.row.no_telp }}</b-table-column>
                 <b-table-column field="alamat" label="Alamat" sortable >{{ props.row.alamat }}</b-table-column>
+                <b-table-column label="Pengaturan">
+                    <v-btn color="green" small dark @click="goto(props.row.id,'SparepartSupplier')">Sparepart</v-btn>
+                </b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >
                                 <v-icon>more_vert</v-icon>
@@ -207,6 +210,9 @@ export default {
     }
   },
   methods: {
+    goto (id, name) {
+      this.$router.push({name: name, params: {idSupplier: id}})
+    },
     seteditData (data) {
       this.typeInput = 'edit'
       this.editData.id = data.id

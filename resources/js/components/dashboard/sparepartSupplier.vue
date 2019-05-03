@@ -35,16 +35,15 @@
         <b-table :data="sparepartList" :paginated="true" :per-page="perPage" :current-page.sync="currentPage" :loading="loadData" :pagination-simple="true" :narrowed="true" :mobile-cards="true" :striped="true" :hoverable="true" :default-sort-direction="defaultSortDirection" default-sort="created_at">
             <template slot-scope="props">
                 <b-table-column label="No." sortable>{{ props.index + 1 }}</b-table-column>
-                <b-table-column field="kode" label="Kode" sortable>{{ props.row.sparepart.kode }}</b-table-column>
-                <b-table-column field="picture" label="Foto" sortable>
-                            <img :src="'/images/sparepart/' + props.row.sparepart.picture" alt="Foto Sparepart" width="100">
+                <b-table-column field="kode" label="Kode" sortable>{{ props.row.kode }}</b-table-column>
+                <b-table-column field="filename" label="Foto" sortable>
+                            <img :src="'/images/sparepart/' + props.row.filename" alt="Foto Sparepart" width="100">
                 </b-table-column>
-                <b-table-column field="nama" label="Nama" sortable>{{ props.row.sparepart.nama }}</b-table-column>
-                <b-table-column field="merk" label="Merk" sortable>{{ props.row.sparepart.merk }}</b-table-column>
-                <b-table-column field="tipe" label="Tipe" sortable>{{ props.row.sparepart.tipe }}</b-table-column>
-                <b-table-column field="tempat" label="Posisi" sortable>{{ props.row.tempat }}</b-table-column>
-                <b-table-column label="Motor" centered>
-                      <v-layout warp v-for="kendaraan in props.row.sparepart.kendaraan" :key="kendaraan.id">
+                <b-table-column field="nama" label="Nama" sortable>{{ props.row.nama }}</b-table-column>
+                <b-table-column field="merk" label="Merk" sortable>{{ props.row.merk }}</b-table-column>
+                <b-table-column field="tipe" label="Tipe" sortable>{{ props.row.tipe }}</b-table-column>
+                 <b-table-column label="Motor" centered>
+                      <v-layout warp v-for="kendaraan in props.row.kendaraan" :key="kendaraan.id">
                         <v-flex xs12 >
                             <v-chip color="teal" dark >
                               {{kendaraan.merk}} {{kendaraan.tipe}}
@@ -52,11 +51,7 @@
                         </v-flex>
                       </v-layout>
                 </b-table-column>
-                <b-table-column label="Stok" sortable >{{props.row.stok }}</b-table-column>
-                <b-table-column label="Stok Minimal" sortable >{{props.row.limitStok }}</b-table-column>
-                <b-table-column label="Harga Beli" sortable >{{price(props.row.hargaBeli) }}</b-table-column>
-                <b-table-column label="Harga Jual" sortable >{{price(props.row.hargaJual) }}</b-table-column>
-                <b-table-column label="Dibeli pada" sortable >{{props.row.created_at }}</b-table-column>
+                <b-table-column label="Dibuat pada" sortable >{{props.row.created_at }}</b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >
                                 <v-icon>more_vert</v-icon>
@@ -65,7 +60,7 @@
                             <v-list-tile  @click.prevent="seteditData(props.row); editDialog = true">
                                 <v-list-tile-title  >Perbaharui</v-list-tile-title>
                             </v-list-tile>
-                            <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true">
+                            <v-list-tile @click.prevent="seteditData(props.row); deleteDialog = true">
                                 <v-list-tile-title >Hapus</v-list-tile-title>
                             </v-list-tile>
                             </v-list>
@@ -116,73 +111,59 @@
                                     Tambahkan Sparepart
                                 </v-card-title>
                                 <v-card-text>
+                                      <v-flex xs12 v-show="cropped == null">
+                                        <div class="uploadbox" >
+                                          <img :src="'/images/upload.jpg'" alt="Upload Foto Sparepart" width="300" v-if="typeInput == 'new'">
+                                          <img :src="'/images/sparepart/' + editData.filename" alt="Upload Foto Sparepart" width="300" v-if="typeInput == 'edit'">
+                                          <input type="file" class="uploadButton" accept="image/png, image/jpeg, image/gif, image/jpg"
+                                              @change="uploadImg($event, 1)">
+                                        </div>
+                                      </v-flex>
+                                      <v-flex xs12 v-show="cropped != null">
+                                        <v-btn fab dark small color="red" class="iconCancel" @click.prevent="cropped = null">
+                                            <v-icon dark >cancel</v-icon>
+                                          </v-btn>
+                                          <vue-croppie 
+                                            ref="croppieRef" 
+                                            :enableOrientation="true"
+                                            :enableResize="false" 
+                                            :viewport="{ width: 350, height: 210, type: 'square' }"
+                                            @result="result" >
+                                        </vue-croppie>
+                                      </v-flex>
+                                          
+                                        <v-flex xs12>
+                                        <v-text-field label="Kode Sparepart*" required v-model="editData.kode" :rules="[rules.required]" @change="isUnique()" :error="!unique" :error-messages="errorMessage" :disabled="typeInput == 'edit'"></v-text-field>
+                                      </v-flex>
+                                       <v-flex xs12>
+                                        <v-text-field label="Nama Sparepart*" required v-model="editData.nama" :rules="[rules.required, rules.textOnly]"></v-text-field>
+                                      </v-flex>
+                                       <v-flex xs12>
+                                        <v-text-field label="Merk Sparepart*" required v-model="editData.merk" :rules="[rules.required, rules.textOnly]"></v-text-field>
+                                      </v-flex>
+                                       <v-flex xs12>
+                                        <v-text-field label="Tipe Sparepart*" required v-model="editData.tipe" :rules="[rules.required, rules.textOnly]"></v-text-field>
+                                      </v-flex>
                                       <v-flex xs12>
-                                         <v-autocomplete
-                                                :items="spareparts"
-                                                :filter="sparepartFilter"
-                                                item-text="view"
-                                                label="Sparepart yang tersedia dicabang ini (kode sparepart)"
-                                                :rules="[rules.required]"
-                                                v-model="editData.sparepart"
-                                                return-object
-                                                v-if="typeInput != 'edit'"
-                                                :error-messages="errorSparepart"
-                                                @input="cekSparepartCode()"
-                                          ></v-autocomplete>
-                                      </v-flex>
-                                      <v-flex xs12>
-                                        <v-text-field label="Kode Sparepart*" v-model="editData.sparepart.kode" :disabled="true"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field label="Nama Sparepart*" v-model="editData.sparepart.nama" :disabled="true"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field label="Merk Sparepart*" v-model="editData.sparepart.merk" :disabled="true"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        Posisi Sparepart
-                                      </v-flex>
-                                       <v-flex xs4>
-                                           <v-select
-                                          v-model="editData.letak"
-                                          :items="letak"
-                                          label="Letak"
+                                        <v-select
+                                          v-model="editData.kendaraans"
+                                          :items="kendaraans"
+                                          item-text="nama"
+                                          item-value="id"
+                                          label="Jenis kendaraan"
+                                          multiple
+                                          chips
+                                          hint="Kendaraan apa yang cocok untuk sparepart ini?"
+                                          persistent-hint
                                         ></v-select>
                                       </v-flex>
-                                       <v-flex xs4>
-                                           <v-select
-                                          v-model="editData.rak"
-                                          :items="rak"
-                                          label="Rak"
-                                        ></v-select>
-                                      </v-flex>
-                                       <v-flex xs4>
-                                           <v-select
-                                          v-model="editData.urut"
-                                          :items="urut"
-                                          label="Nomor Urut"
-                                        ></v-select>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field type="text" label="Stok Saat Ini*" :rules="[rules.required,rules.numberOnly]" v-model="editData.stok"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field type="text" label="Stok Minimal Sparepart*" :rules="[rules.required,rules.numberOnly]" v-model="editData.limitStok"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field type="text" label="Harga Beli (Rp)*" :rules="[rules.required,rules.numberOnly]" v-model="editData.hargaBeli"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field type="text" label="Harga Jual (Rp)*" :rules="[rules.required,rules.numberOnly]" v-model="editData.hargaJual"></v-text-field>
-                                      </v-flex>
-                                     
                                   <small>*Wajib diisi</small>
                                 </v-card-text>
                                 <v-card-actions>
                                   <v-spacer></v-spacer>
                                   <v-btn color="red darken-1" dark @click.prevent="editDialog = false; resetData()">Batal</v-btn>
-                                  <v-btn color="green darken-1" dark v-if="typeInput == 'new'" @click.prevent="SendData()" :loading="loading">Tambahkan</v-btn>
-                                  <v-btn color="orange darken-1" dark v-if="typeInput == 'edit'" @click.prevent="UpdateData()" :loading="loading">Perbaharui</v-btn>
+                                  <v-btn color="green darken-1" dark v-if="typeInput == 'new'" @click.prevent="cropData()" :loading="loading">Tambahkan</v-btn>
+                                  <v-btn color="orange darken-1" dark v-if="typeInput == 'edit'" @click.prevent="cropData()" :loading="loading">Perbaharui</v-btn>
                                 </v-card-actions>
                               </v-card>
                                 </v-form>
@@ -207,18 +188,27 @@
 </div>
 </div>
 </template>
+<style>
+.cr-boundary{
+  height: 300px !important;
+}
+.iconCancel{
+  position: absolute !important;
+  z-index: 20;
+  right: 0;
+  top: 0;
+}
+</style>
 
 <script>
 export default {
   mounted () {
-    this.$parent.tab = 'cabangD2'
     this.getData()
-    this.getSparepart()
-    this.setUrut()
+    this.getKendaraan()
   },
   data () {
     return {
-      errorSparepart: '',
+      cropped: null,
       valid: true,
       typeInput: 'new',
       role: 'semua',
@@ -226,30 +216,23 @@ export default {
       stat: '',
       search: '',
       spareparts: [],
-      cabangSpareprats: [],
       dialog: false,
       deleteDialog: false,
+      editDialog: false,
       snackbar: false,
       text: '',
       color: null,
       reset: false,
       editData: {
-        sparepart: {
-          nama: '',
-          kode: '',
-          merk: '',
-          tipe: ''
-        },
-        id_cabang: -1,
-        tempat: '',
-        limitStok: '',
-        letak: 'DPN',
-        rak: 'KACA',
-        urut: '01',
-        hargaBeli: null,
-        hargaJual: null
+        kode: '',
+        nama: '',
+        merk: null,
+        tipe: '',
+        kendaraans: [],
+        id_supplier: -1,
+        filename: null
       },
-      editDialog: false,
+      kendaraans: [],
       load: false,
       deleteId: -1,
       loading: false,
@@ -260,12 +243,9 @@ export default {
       currentPage: 1,
       perPage: 10,
       roles: [],
+      data: new FormData(),
       unique: true,
-      letak: ['DPN', 'TGH', 'BLK'],
-      rak: ['KACA', 'DUS', 'BAN', 'KAYU'],
       errorMessage: '',
-      errorCode: false,
-      urut: [],
       emailRules: [
         v => !!v || 'Email tidak boleh kosong',
         v => /.+@.+/.test(v) || 'Email tidak valid'
@@ -279,108 +259,124 @@ export default {
   },
   computed: {
     sparepartList () {
-      if (this.cabangSpareprats.length) {
-        return this.cabangSpareprats.filter((row, index) => {
-          if (this.search !== '') return row.sparepart.nama.toLowerCase().includes(this.search.toLowerCase()) || row.sparepart.kode.toLowerCase().includes(this.search.toLowerCase())
+      if (this.spareparts.length) {
+        return this.spareparts.filter((row, index) => {
+          if (this.search !== '') return row.nama.toLowerCase().includes(this.search.toLowerCase()) || row.kode.toLowerCase().includes(this.search.toLowerCase())
           return true
         })
       }
     }
   },
   methods: {
-    cekSparepartCode () {
-      var sparepart = this.cabangSpareprats.filter((row, index) => {
-        if (row.sparepart.kode === this.editData.sparepart.kode) {
-          return true
+    cropData () {
+      if (this.changeImg === 1) {
+        let options = {
+          type: 'base64',
+          format: 'png'
         }
-      })
-      if (sparepart.length > 0) {
-        this.errorSparepart = 'Mohon maaf, sparepart ini sudah dimasukkan kedalam cabang ini.'
-      } else {
-        this.errorSparepart = ''
+        this.$refs.croppieRef.result(options, (output) => {
+          this.editData.filename = output
+        })
       }
-    },
-    price (value) {
-      const formatter = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 2
-      })
-      return formatter.format(value)
-    },
-    sparepartFilter (item, queryText, itemText) {
-      const textOne = item.kode.toLowerCase()
-      const searchText = queryText.toLowerCase()
-      return textOne.indexOf(searchText) > -1
-    },
-    setUrut () {
-      var n = []
-      for (let i = 1; i < 100; i++) {
-        if (i < 10) {
-          n.push('0' + i)
+      this.$nextTick(function () {
+        if (this.typeInput === 'edit') {
+          this.UpdateData()
         } else {
-          n.push(i)
+          this.SendData()
         }
-      }
-      this.urut = n
-    },
-    setData () {
-      var sparepart = this.spareparts.filter((row, index) => {
-        if (row.kode === this.editData.sparepart.kode) return true
       })
-      console.log(sparepart)
-      if (sparepart.length < 1) {
-        this.errorCode = true
-        this.errorMessage = 'Data tidak ditemukan'
-      } else {
-        this.errorCode = false
-        this.errorMessage = ''
-        this.editData.sparepart = sparepart[0]
-      }
     },
-    getSparepart () {
+    uploadImg (e, num) {
+      var file = e.target.files[0]
+      if (!/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(e.target.value)) {
+        alert('Anda hanya diperbolehkan mengupload foto/gambar')
+        return false
+      }
+      var reader = new FileReader()
+      reader.onload = (e) => {
+        let data
+        if (typeof e.target.result === 'object') {
+          data = window.URL.createObjectURL(new Blob([e.target.result]))
+        } else {
+          data = e.target.result
+        }
+        this.cropped = data
+        this.$refs.croppieRef.bind({
+          url: this.cropped
+        })
+        this.changeImg = 1
+      }
+      reader.readAsArrayBuffer(file)
+    },
+    result (output) {
+      console.log('result')
+    },
+    getKendaraan () {
       var uri
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = '/api/sparepart'
+      uri = '/api/kendaraan'
       axios.get(uri, config).then(response => {
-        this.spareparts = response.data
-        for (let i = 0; i < this.spareparts.length; i++) {
-          this.spareparts[i].view = this.spareparts[i].kode + ' ' + this.spareparts[i].nama
+        this.kendaraans = response.data
+        for (let i = 0; i < this.kendaraans.length; i++) {
+          this.kendaraans[i].nama = this.kendaraans[i].merk + ' ' + this.kendaraans[i].tipe
         }
+      })
+    },
+    isUnique () {
+      if (this.editData.kode === null || this.editData.kode === '') {
+        this.unique = true
+        this.errorMessage = ''
+      }
+      this.load = true
+      var uri
+      var config = {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      }
+      uri = '/api/sparepartIsUnique'
+      axios.post(uri, {kode: this.editData.kode}, config).then(response => {
+        console.log(response)
+        if (response.data === 1) {
+          this.unique = false
+          this.errorMessage = 'Kode sudah digunakan'
+        } else {
+          this.unique = true
+          this.errorMessage = ''
+        }
+      }).catch(error => {
+        console.log(error)
+        this.errorMessage = 'Kode sudah digunakan'
+        this.unique = false
       })
     },
     seteditData (data) {
       this.typeInput = 'edit'
-      this.editData.sparepart = data.sparepart
-      this.editData.hargaBeli = data.hargaBeli
-      this.editData.hargaJual = data.hargaJual
-      this.editData.stok = data.stok
-      this.editData.limitStok = data.limitStok
-      this.editData.id = data.id
-      var tempat = data.tempat.split('-')
-      this.editData.letak = tempat[0]
-      this.editData.rak = tempat[1]
-      this.editData.urut = tempat[2]
-      this.editData.sparepart.view = this.editData.sparepart.kode + ' ' + this.editData.sparepart.nama
+      this.editData.kode = data.kode
+      this.editData.nama = data.nama
+      this.editData.merk = data.merk
+      this.editData.tipe = data.tipe
+      try {
+        for (let i = 0; i < data.kendaraan.length; i++) {
+          this.editData.kendaraans.push(data.kendaraan[i].id)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      this.editData.filename = data.filename
+      this.changeImg = 0
     },
-    resetData (data) {
+    resetData () {
       this.loading = false
       this.deleteDialog = false
-      this.deleteId = -1
+      this.$refs.form.reset()
       this.typeInput = 'new'
-      this.editData.sparepart = {
-        nama: '',
-        kode: '',
-        merk: '',
-        tipe: ''
-      }
-      this.editData.id_cabang = -1
-      this.editData.tempat = ''
-      this.editData.limitStok = ''
+      this.cropped = null
+      this.data = new FormData()
     },
     deleteData () {
       var config = {
@@ -388,7 +384,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      var uri = '/api/sparepartCabang/' + this.deleteId
+      var uri = '/api/sparepart/' + this.editData.kode
       axios.delete(uri, config).then(response => {
         this.snackbar = true
         this.text = 'Data berhasil dihapus'
@@ -398,8 +394,8 @@ export default {
       }).catch(error => {
         console.log(error)
         this.snackbar = true
-        this.text = 'Coba Lagi'
         this.color = 'red'
+        this.text = 'Coba Lagi'
         this.resetData()
       })
     },
@@ -410,38 +406,49 @@ export default {
         this.color = 'red'
         return
       }
-      if (this.errorSparepart !== '') {
+      if (this.editData.kendaraans.length < 1) {
         this.snackbar = true
-        this.text = 'Mohon untuk melengkapi form yang tersedia'
-        this.color = 'red'
-        return
-      }
-      if (this.errorCode) {
-        this.snackbar = true
-        this.text = 'Mohon untuk kode sparepart yang benar'
+        this.text = 'Mohon untuk menentukan kendaraan yang cocok untuk sparepart ini terlebih dahulu'
         this.color = 'error'
         return
       }
-      this.editData.tempat = this.editData.letak + '-' + this.editData.rak + '-' + this.editData.urut
+      if (this.cropped == null) {
+        this.snackbar = true
+        this.text = 'Mohon untuk mengupload foto sparepart terlebih dahulu'
+        this.color = 'error'
+        return
+      }
       this.loading = true
-      this.editData.kode_sparepart = this.editData.sparepart.kode
       var uri
       var config = {
         headers: {
+          'Content-Type': 'multipart/form-data',
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = '/api/sparepartCabang'
-      this.editData.id_cabang = this.$route.params.idCabang
-      axios.post(uri, this.editData, config).then(response => {
+      this.prepareFields()
+      uri = '/api/sparepart'
+      axios.post(uri, this.data, config).then(response => {
         this.resetData()
         this.getData()
       }).catch(error => {
         console.log(error.response)
         this.snackbar = true
-        this.text = 'Coba Lagi'
+        this.text = error.response.data.errors.phoneNumber[0]
         this.color = 'red'
       })
+    },
+    prepareFields () {
+      this.data.append('kode', this.editData.kode)
+      this.data.append('nama', this.editData.nama)
+      this.data.append('merk', this.editData.merk)
+      this.data.append('tipe', this.editData.tipe)
+      for (let i = 0; i < this.editData.kendaraans.length; i++) {
+        this.data.append('kendaraans[]', this.editData.kendaraans[i])
+      }
+      this.data.append('id_supplier', this.$route.params.idSupplier)
+      this.data.append('filename', this.editData.filename)
+      this.data.append('changeImg', this.changeImg)
     },
     UpdateData () {
       if (!this.$refs.form.validate()) {
@@ -450,7 +457,12 @@ export default {
         this.color = 'red'
         return
       }
-      this.editData.tempat = this.editData.letak + '-' + this.editData.rak + '-' + this.editData.urut
+      if (this.editData.kendaraans.length < 1) {
+        this.snackbar = true
+        this.text = 'Mohon untuk menentukan kendaraan yang cocok untuk sparepart ini terlebih dahulu'
+        this.color = 'error'
+        return
+      }
       this.loading = true
       var uri
       var config = {
@@ -458,10 +470,9 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      this.editData.kode_sparepart = this.editData.sparepart.kode
-      uri = '/api/sparepartCabang/' + this.editData.id
-      this.editData.people_id = this.$route.params.idCabang
-      axios.patch(uri, this.editData, config).then(response => {
+      this.prepareFields()
+      uri = '/api/sparepart/' + this.editData.kode
+      axios.post(uri, this.data, config).then(response => {
         this.resetData()
         this.getData()
       }).catch(error => {
@@ -480,9 +491,9 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = '/api/sparepartCabang/' + this.$route.params.idCabang
+      uri = '/api/sparepartBySupplier/' + this.$route.params.idSupplier
       axios.get(uri, config).then(response => {
-        this.cabangSpareprats = response.data
+        this.spareparts = response.data
         this.loadData = false
       })
     }

@@ -52,6 +52,18 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/supplier/{id}', 'SupplierController@update');
     Route::delete('/supplier/{id}', 'SupplierController@destroy');
 
+    Route::get('/sparepart','SparepartController@index');
+    Route::get('/sparepart/{kode}','SparepartController@show');
+    Route::get('/sparepartBySupplier/{idSupplier}','SparepartController@showBySupplier');
+    Route::get('/sparepartCabang/{idCabang}','SparepartController@showByCabang');
+    Route::post('/sparepartCabang','SparepartController@storeToCabang');
+    Route::post('/sparepart','SparepartController@store');
+    Route::post('/sparepart/{kode}','SparepartController@update');
+    Route::post('/sparepartIsUnique','SparepartController@isUniqueCode');
+    Route::patch('/sparepartCabang/{spBrID}','SparepartController@updateSpCabang');
+    Route::delete('/sparepartCabang/{spBrID}','SparepartController@destroyByCabang');
+    Route::delete('/sparepart/{kode}','SparepartController@destroy');
+
 });
 Route::group([
     'prefix' => 'auth'

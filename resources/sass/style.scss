@@ -1,4 +1,21 @@
 
+.uploadbox{
+    position: relative;
+    max-width : 300px;
+    margin: auto;
+    .uploadButton{
+        position:absolute; 
+        opacity : 0;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+}
+.table-wrapper {
+    overflow-x: auto;
+}
 .sideToggle{
     margin-left: 0px !important;
     padding-left: 30px;

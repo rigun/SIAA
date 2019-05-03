@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sparepart extends Model
 {
-    //
+    protected $primaryKey = 'kode';
+    public $incrementing = false;
+    public function kendaraan(){
+        return $this->belongsToMany('App\Motor','sparepart_kendaraans','kode_sparepart','id_kendaraan');
+    }
 }

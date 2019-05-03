@@ -19,6 +19,8 @@ class CreateSparepartsTable extends Migration
             $table->string('nama');
             $table->string('merk');
             $table->string('tipe');
+            $table->unsignedBigInteger('id_supplier');
+            $table->foreign('id_supplier')->references('id')->on('suppliers');
             $table->timestamps();
         });
     }

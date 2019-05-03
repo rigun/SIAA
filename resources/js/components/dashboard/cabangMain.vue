@@ -39,7 +39,7 @@
                 <b-table-column field="created_at" label="Dibuat pada">{{ props.row.created_at }}</b-table-column>
                 <b-table-column label="Pengaturan" :visible="!loadData">
                     <v-btn color="indigo" small dark @click="goto(props.row.id,'Pegawai')">Pegawai</v-btn>
-                    <v-btn color="green" small dark @click="goto(props.row.id,'Sparepart')">Sparepart</v-btn>
+                    <v-btn color="green" small dark @click="goto(props.row.id,'SparepartCabang')">Sparepart</v-btn>
                 </b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >

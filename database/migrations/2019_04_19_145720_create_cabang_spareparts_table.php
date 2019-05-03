@@ -22,7 +22,8 @@ class CreateCabangSparepartsTable extends Migration
             $table->double('hargaBeli');
             $table->double('hargaJual');
             $table->string('tempat');
-            $table->integer('stock');
+            $table->integer('stok');
+            $table->integer('limitStok');
             $table->timestamps();
         });
     }

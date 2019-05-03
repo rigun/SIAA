@@ -33,7 +33,8 @@ class JasaServiceController extends Controller
         $item = JasaService::where('id',$id)->first();
         $item->jenis = $request->jenis;
         $item->hargaJasa = $request->hargaJasa;
-        $item->save();    
+        $item->save();  
+        return 'Sukses';  
     }
     public function show($id){
         return JasaService::where('id',$id)->first();

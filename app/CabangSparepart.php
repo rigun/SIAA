@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CabangSparepart extends Model
 {
-    //
+    public function sparepart(){
+        return $this->belongsTo('App\Sparepart','kode_sparepart','kode')->with('kendaraan');
+    }
 }

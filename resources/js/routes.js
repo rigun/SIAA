@@ -14,8 +14,9 @@ import ChangePassword from './components/dashboard/changePassword.vue';
 import MainView from './components/dashboard/mainView.vue'
 import CabangMain from './components/dashboard/cabangMain.vue'
 import Pegawai from './components/dashboard/pegawaiCabang.vue'
-import Sparepart from './components/dashboard/sparepartCabang.vue'
+import SparepartCabang from './components/dashboard/sparepartCabang.vue'
 import Supplier from './components/dashboard/supplierMain.vue'
+import SparepartSupplier from './components/dashboard/sparepartSupplier.vue'
 
 const routes = [
     {
@@ -49,9 +50,14 @@ const routes = [
                 component: Pegawai
             },
             {
-                name: 'Sparepart',
+                name: 'SparepartCabang',
                 path: 'cabang/sparepart/:idCabang',
-                component: Sparepart
+                component: SparepartCabang
+            },
+            {
+                name: 'SparepartSupplier',
+                path: 'supplier/sparepart/:idSupplier',
+                component: SparepartSupplier
             },
             {
                 name: 'Supplier',
