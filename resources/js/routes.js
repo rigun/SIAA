@@ -17,7 +17,14 @@ import Pegawai from './components/dashboard/pegawaiCabang.vue'
 import SparepartCabang from './components/dashboard/sparepartCabang.vue'
 import Supplier from './components/dashboard/supplierMain.vue'
 import SparepartSupplier from './components/dashboard/sparepartSupplier.vue'
-
+import Pengadaan from './components/dashboard/pengadaanComponent.vue'
+import SupplierCabang from './components/dashboard/supplierCabangPengadaan.vue'
+import SparepartSupplierCabang from './components/dashboard/sparepartSupplierPengadaan.vue'
+import KonfirmasiPengadaan from './components/dashboard/konfirmasiPengadaan.vue'
+// Transaksi
+import Transaksi from './components/csPart/transaction.vue'
+import TransaksiDetail from './components/csPart/transactionDetail.vue'
+import TransaksiDetailItem from './components/csPart/transactionDetailItem.vue'
 const routes = [
     {
         name: 'LoginLayout',
@@ -43,6 +50,41 @@ const routes = [
                 name: 'Cabang',
                 path: 'cabang',
                 component: CabangMain
+            },
+            {
+                name: 'Transaksi',
+                path: 'transaksi',
+                component: Transaksi
+            },
+            {
+                name: 'TransaksiDetail',
+                path: 'transaksi/:TransaksiType-:nomor_transaksi-:idTransaksi',
+                component: TransaksiDetail
+            },
+            {
+                name: 'TransaksiDetailItem',
+                path: 'transaksi/:TransaksiType-:nomor_transaksi-:idTransaksi/:idDetail',
+                component: TransaksiDetailItem
+            },
+            {
+                name: 'Pengadaan',
+                path: 'cabang/pengadaan/:idCabang',
+                component: Pengadaan
+            },
+            {
+                name: 'KonfirmasiPengadaan',
+                path: 'cabang/konfirmasi/:idPemesanan',
+                component: KonfirmasiPengadaan
+            },
+            {
+                name: 'SupplierCabang',
+                path: 'cabang/supplier/:idCabang',
+                component: SupplierCabang
+            },
+            {
+                name: 'SparepartSupplierCabang',
+                path: 'cabang/supplier/:idCabang/sparepart/:idSupplier',
+                component: SparepartSupplierCabang
             },
             {
                 name: 'Pegawai',

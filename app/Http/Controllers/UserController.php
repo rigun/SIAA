@@ -6,10 +6,13 @@ use Illuminate\Http\Request;
 use App\User;
 use Hash;
 use JWTAuth;
+use Exception;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
 {
+    private $idCabang;
+
     public function updatePassword(Request $request, $id)
     {
         $this->validateWith([
@@ -50,9 +53,17 @@ class UserController extends Controller
         return response()->json(['error' => 'Unauthorized'], 401);
       }
 
+      try{
+        $this->idCabang = auth()->user()->detail()->first()->id_cabang;
+      }catch(Exception $e){
+        $this->idCabang = -1;
+      }
+
       return $this->respondWithToken($token);
     }
-
+    public function getPegawaiId(){
+      return JWTAuth::parseToken()->authenticate()->detail()->first()->id;
+    }
     protected function respondWithToken($token)
     {
       
@@ -60,7 +71,8 @@ class UserController extends Controller
         'access_token' => $token,
         'id' => auth()->user()->id,
         'status' => auth()->user()->status,
-        'role' => auth()->user()->role()->first()->name
+        'role' => auth()->user()->role()->first()->name,
+        'idCabang' => $this->idCabang
       ]);
     }
     public function getAuthenticatedUser()

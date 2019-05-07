@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Sparepart;
 use App\CabangSparepart;
-
+use App\Pemesanan;
+use App\DetailPemesanan;
 class SparepartController extends Controller
 {
     private $photos_path;
@@ -15,11 +16,49 @@ class SparepartController extends Controller
         $this->photos_path = public_path('/images/sparepart');
 
     }
-    public function getPrice($kode,$id){
+    public function showByCabangSupplier($supplierId,$cabang_id){
+        $sparepart = Sparepart::where('id_supplier',$supplierId)->get();
+        $data = [];
+        $tempData = [];
+        foreach($sparepart as $s){
+            if($sparepartBranch = CabangSparepart::where([['id_cabang',$cabang_id],['kode_sparepart',$s->kode]])->with('sparepart')->first()){
+                $data[] = $sparepartBranch;
+            }
+        }
+        if($order = Pemesanan::where([['id_supplier',$supplierId],['id_cabang',$cabang_id],['status',0]])->first()){
+            foreach($data as $key => $d){
+                $tempData[$key]['data'] = $d;
+                if($od = DetailPemesanan::where([['id_pemesanan',$order->id],['kode_sparepart',$d->kode_sparepart]])->first()){
+                    $tempData[$key]['total'] = $od->total;
+                }else{
+                    $tempData[$key]['total'] = 0;
+                }
+            }
+        }else{
+            foreach($data as $key => $d){
+                $tempData[$key]['data'] = $d;
+                $tempData[$key]['total'] = 0;
+            }
+        }
+        return $tempData;
+    }
+    public function showSupplierOfCabang($cabang_id){
+        $sp = CabangSparepart::where('id_cabang',$cabang_id)->get();
+        $supplier = [];
+        foreach($sp as $s){
+            $supplier[] = Sparepart::where('kode',$s->kode_sparepart)->first()->supplier()->first();
+        }
+        $array = array_values( array_unique( $supplier, SORT_REGULAR ) );
+        return json_encode( $array );
+    }
+    public function getharga($kode,$id){
         return CabangSparepart::where([['kode_sparepart',$kode],['id_cabang',$id]])->first()->hargaJual;
     }
     public function getPosition($kode,$id){
         return CabangSparepart::where([['kode_sparepart',$kode],['id_cabang',$id]])->first()->tempat;
+    }
+    public function getStock($kode,$id){
+        return CabangSparepart::where([['kode_sparepart',$kode],['id_cabang',$id]])->first()->stok;
     }
     public function index()
     {

@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Role;
 use App\User;
 use App\Pegawai;
+use App\Cabang;
 class UsersTableSeeder extends Seeder
 {
     /**
@@ -14,7 +15,9 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $roles = ['owner','cs','kasir'];
-
+        $cabang = new Cabang();
+        $cabang->nama = 'Babarsari';
+        $cabang->save();
         foreach($roles as $role){
             $this->command->info('Creating Role '. strtoupper($role));
             
@@ -35,6 +38,7 @@ class UsersTableSeeder extends Seeder
             $pegawai->no_telp = $role;
             $pegawai->gaji = 1000000;
             $pegawai->user_id = $user->id;
+            $pegawai->id_cabang = $cabang->id;
             $pegawai->save();    
         }
         $pegawai = new Pegawai();

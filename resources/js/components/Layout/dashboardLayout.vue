@@ -35,8 +35,9 @@
       <v-list class="pt-0" dense>
         <v-divider light></v-divider>
          <v-list-tile @click="routerGoto('DashboardContent')"><v-list-tile-action><v-icon>dashboard</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Beranda</v-list-tile-title></v-list-tile-content></v-list-tile>
-         <v-list-tile @click="routerGoto('Cabang')"><v-list-tile-action><v-icon>dashboard</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Cabang</v-list-tile-title></v-list-tile-content></v-list-tile>
-         <v-list-tile @click="routerGoto('Supplier')"><v-list-tile-action><v-icon>lock</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Supplier</v-list-tile-title></v-list-tile-content></v-list-tile>
+         <v-list-tile @click="routerGoto('Cabang')" v-if="roles == 'owner'"><v-list-tile-action><v-icon>dashboard</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Cabang</v-list-tile-title></v-list-tile-content></v-list-tile>
+         <v-list-tile @click="routerGoto('Supplier')" v-if="roles == 'owner'"><v-list-tile-action><v-icon>lock</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Supplier</v-list-tile-title></v-list-tile-content></v-list-tile>
+         <v-list-tile @click="routerGoto('Transaksi')" v-if="roles == 'cs'"><v-list-tile-action><v-icon>lock</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Transaksi</v-list-tile-title></v-list-tile-content></v-list-tile>
          <v-list-tile @click="routerGoto('changePassword')"><v-list-tile-action><v-icon>lock</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Ubah Password</v-list-tile-title></v-list-tile-content></v-list-tile>
          <v-list-tile @click="logoutDialog = true"><v-list-tile-action><v-icon>power_settings_new</v-icon></v-list-tile-action><v-list-tile-content><v-list-tile-title>Keluar</v-list-tile-title></v-list-tile-content></v-list-tile>
       </v-list>

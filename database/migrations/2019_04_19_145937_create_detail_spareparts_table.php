@@ -15,8 +15,10 @@ class CreateDetailSparepartsTable extends Migration
     {
         Schema::create('detail_spareparts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('id_sparepart_cabang');
-            $table->foreign('id_sparepart_cabang')->references('id')->on('cabang_spareparts');
+            $table->unsignedBigInteger('id_detailtransaksi');
+            $table->foreign('id_detailtransaksi')->references('id')->on('detail_transaksis');
+            $table->string('kode_sparepart');
+            $table->foreign('kode_sparepart')->references('kode')->on('spareparts');
             $table->integer('jumlah');
             $table->timestamps();
         });

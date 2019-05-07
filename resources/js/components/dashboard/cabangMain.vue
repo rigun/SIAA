@@ -37,9 +37,10 @@
                 <b-table-column label="No." sortable>{{ props.index + 1 }}</b-table-column>
                 <b-table-column field="nama" label="Name" sortable>{{ props.row.nama }}</b-table-column>
                 <b-table-column field="created_at" label="Dibuat pada">{{ props.row.created_at }}</b-table-column>
-                <b-table-column label="Pengaturan" :visible="!loadData">
+                <b-table-column label="Pengaturan" :visible="!loadData" centered>
                     <v-btn color="indigo" small dark @click="goto(props.row.id,'Pegawai')">Pegawai</v-btn>
                     <v-btn color="green" small dark @click="goto(props.row.id,'SparepartCabang')">Sparepart</v-btn>
+                    <v-btn color="orange" small dark @click="goto(props.row.id,'Pengadaan')">Pengadaan</v-btn>
                 </b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >

@@ -19,7 +19,7 @@ class CreateDetailTransaksisTable extends Migration
             $table->unsignedBigInteger('id_kendaraan');
             $table->foreign('id_transaksi')->references('id')->on('transaksis');
             $table->foreign('id_kendaraan')->references('id')->on('motors');
-            $table->unsignedBigInteger('id_montir');
+            $table->unsignedBigInteger('id_montir')->nullable();
             $table->foreign('id_montir')->references('id')->on('pegawais');
             $table->string('plat_nomor');
             $table->timestamps();

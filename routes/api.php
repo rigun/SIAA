@@ -34,16 +34,17 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::delete('/kendaraan/{id}','MotorController@destroy');
 
     Route::get('/cabang','CabangController@index');
-    Route::get('/branchEmployee/{id}','CabangController@employeeByBranch');
+    Route::get('/branchEmployee/{id}','CabangController@employeeByCabang');
     Route::get('/cabang/{id}','CabangController@show');
     Route::post('/cabang','CabangController@store');
     Route::post('/cabang/{id}','CabangController@update');
     Route::delete('/cabang/{id}','CabangController@destroy');
 
     Route::get('/pegawai','PegawaiController@index');
-    Route::get('/employeebyBranch/{branch_id}','PegawaiController@showByBranch');
+    Route::get('/employeebyCabang/{branch_id}','PegawaiController@showByBranch');
     Route::get('/pegawai/{id}','PegawaiController@show');
     Route::post('/pegawai','PegawaiController@store');
+    Route::get('/montir/{branch_id}','PegawaiController@showMontirByBranch');
     Route::post('/pegawai/{id}','PegawaiController@update');
     Route::delete('/pegawai/{id}','PegawaiController@destroy');
     
@@ -64,6 +65,44 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::delete('/sparepartCabang/{spBrID}','SparepartController@destroyByCabang');
     Route::delete('/sparepart/{kode}','SparepartController@destroy');
 
+    Route::get('/transaksi','TransaksiController@index');
+    Route::get('/transaksiByBranch/{branch_id}','TransaksiController@showByBranch');
+    Route::post('/transaksi','TransaksiController@store');
+    Route::post('/updateTransaksi/{idTransaksi}','TransaksiController@update');
+    Route::patch('/transaksi/status/{id}','TransaksiController@updateStatus');
+    Route::delete('/transaksi/{id}','TransaksiController@destroy');
+
+    
+    Route::get('/customer/{TransaksiId}','DetailTransaksiController@getCustomer');
+    Route::get('/detailTransaksi/{TransaksiId}','DetailTransaksiController@showByTransaksi');
+    Route::post('/detailTransaksi','DetailTransaksiController@store');
+    Route::post('/detailTransaksi/{vehiclecustomerid}','DetailTransaksiController@update');
+    Route::delete('/detailTransaksi/{TransaksiDetailId}','DetailTransaksiController@destroy');
+
+    Route::get('/myvehicle/{TransaksiDetailId}','DetailTransaksiController@myvehicle');
+
+    Route::get('/detailTSp/{TransaksiDetailId}/{branchId}','DetailSparepartController@showByTransaksiDetail');
+    Route::post('/detailTSp','DetailSparepartController@store');
+    Route::post('/detailTSp/{tspId}','DetailSparepartController@update');
+    Route::delete('/detailTSp/{tspId}','DetailSparepartController@destroy');
+
+    Route::get('/detailTSv/{TransaksiDetailId}','DetailServiceController@showByTransaksiDetail');
+    Route::post('/detailTSv','DetailServiceController@store');
+    Route::post('/detailTSv/{tspId}','DetailServiceController@update');
+    Route::delete('/detailTSv/{tspId}','DetailServiceController@destroy');
+    Route::post('/spk/{idTransaksi}/{idDetaiTransaksi}','DetailTransaksiController@spkExport');
+    Route::post('/notaLunas/{idTransaksi}','DetailTransaksiController@notaLunasExport');
+
+    // pemesanan
+    Route::get('/konfirmasiData/{pemesananId}','PemesananController@konfirmasiData');
+    Route::get('/pemesanan/{id_cabang}','PemesananController@showByCabang');
+    Route::get('/detailPemesanan/{pemesananId}','PemesananController@show');
+    Route::delete('/sparepartBS/{supplierId}/{id_cabang}','PemesananController@destroy');
+    Route::get('/supplierCabang/{id_cabang}','SparepartController@showSupplierOfCabang');
+    Route::get('/sparepartBS/{supplierId}/{id_cabang}','SparepartController@showByCabangSupplier');
+    Route::post('/pemesanan','DetailPemesananController@store');
+    Route::post('/storetotalaccept','DetailPemesananController@storetotalaccept');
+    Route::post('/cetakPemesanan','DetailPemesananController@cetakPemesanan');
 });
 Route::group([
     'prefix' => 'auth'

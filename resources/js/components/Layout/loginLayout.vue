@@ -99,6 +99,7 @@ import store from '../../store'
             localStorage.setItem('role', response.data.role)
             localStorage.setItem('id', response.data.id)
             localStorage.setItem('status', response.data.status)
+            localStorage.setItem('idCabang', response.data.idCabang)
             this.$router.push({name: 'DashboardContent'})
             this.load = false;
         }).catch(error => {

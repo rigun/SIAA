@@ -15,6 +15,8 @@ class CreateDetailServicesTable extends Migration
     {
         Schema::create('detail_services', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('id_detailtransaksi');
+            $table->foreign('id_detailtransaksi')->references('id')->on('detail_transaksis');
             $table->unsignedBigInteger('id_service');
             $table->foreign('id_service')->references('id')->on('jasa_services');
             $table->integer('jumlah');

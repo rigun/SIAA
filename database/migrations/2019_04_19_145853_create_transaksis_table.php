@@ -25,6 +25,12 @@ class CreateTransaksisTable extends Migration
             $table->foreign('idCS')->references('id')->on('pegawais');
             $table->unsignedBigInteger('idKasir')->nullable();
             $table->foreign('idKasir')->references('id')->on('pegawais');
+            $table->double('totalServices')->default(0);
+            $table->double('totalSpareparts')->default(0);
+            $table->double('totalCost')->default(0);
+            $table->double('payment')->default(0);
+            $table->double('diskon')->default(0);
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }

@@ -15,3 +15,5 @@ Route::get('/', function () {return view('app');});
 Route::get('/{suburl}', function () {return view('app');});
 Route::get('/{suburl}/{subsuburl}', function () {return view('app');});
 Route::get('/{suburl}/{subsuburl}/{subsubsuburl}', function () {return view('app');});
+Route::get('/{suburl}/{subsuburl}/{subsubsuburl}/{subsubsubsuburl}', function () {return view('app');});
+Route::get('/{suburl}/{subsuburl}/{subsubsuburl}/{subsubsubsuburl}/{subsubsubsubsuburl}', function () {return view('app');});

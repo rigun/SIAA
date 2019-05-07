@@ -4,11 +4,11 @@
 
       <div class="columns m-t-10">
         <div class="column">
-          <h1 class="title">Daftar Pegawai</h1>
+          <h1 class="title">Transaksi Cabang</h1>
         </div>
         <div class="column">
             <v-flex sm6 d-flex style="margin-left: auto">
-              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="editDialog = true; typeInput = 'new'">Tambah Pegawai</v-btn>
+              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="editDialog = true; typeInput = 'new'">Transaksi Baru</v-btn>
             </v-flex>
         </div>
       </div>
@@ -35,24 +35,30 @@
         <b-table :data="usersList" :paginated="true" :per-page="perPage" :current-page.sync="currentPage" :loading="loadData" :pagination-simple="true" :narrowed="true" :mobile-cards="true" :striped="true" :hoverable="true" :default-sort-direction="defaultSortDirection" default-sort="created_at">
             <template slot-scope="props">
                 <b-table-column label="No." sortable>{{ props.index + 1 }}</b-table-column>
-                <b-table-column field="detail.nama" label="Nama" sortable>{{ props.row.nama }}</b-table-column>
-                <b-table-column field="detail.no_telp" label="Nomor Telepon" sortable>{{ props.row.no_telp }}</b-table-column>
-                <b-table-column field="detail.alamat" label="Alamat" sortable >{{ props.row.alamat }}</b-table-column>
-                <b-table-column label="Peran" sortable >
-                    <span v-if="props.row.user != null">{{props.row.user.role.name }}</span>
-                    <span v-if="props.row.user == null">montir</span>
-                </b-table-column>
-                <b-table-column label="Gaji" sortable >{{convertPrice(props.row.gaji) }}</b-table-column>
+                <b-table-column label="Nomor Transaksi" sortable >{{ props.row.nomor_transaksi+"-"+props.row.id }}</b-table-column>
+                <b-table-column field="namaKonsumen" label="Nama Konsumen" sortable >{{ props.row.namaKonsumen }}</b-table-column>
+                <b-table-column field="nomorKonsumen" label="Nomor Handphone" sortable >{{ props.row.nomorKonsumen }}</b-table-column>
+                <b-table-column field="alamatKonsumen" label="Alamat" sortable >{{ props.row.alamatKonsumen }}</b-table-column>
+                <b-table-column field="status" label="Status" sortable >
+                  <span v-if="props.row.status == 0"><v-chip color="blue" dark>Pengisian Data</v-chip></span>
+                  <span v-if="props.row.status == 1"><v-chip color="orange" dark>Sedang Dikerjakan</v-chip></span>
+                  <span v-if="props.row.status == 2"><v-chip color="yellow">Pengerjaan Selesai</v-chip></span>
+                  <span v-if="props.row.status == 3"><v-chip color="green" dark>Transaksi Selesai</v-chip></span>
+                  </b-table-column>
+                <b-table-column label="Pengaturan" sortable ><v-btn color="green" small dark @click.prevent="gotoRoute(props.row.nomor_transaksi,props.row.id)">Detail</v-btn></b-table-column>
                 <b-table-column label="Diterima pada" sortable >{{props.row.created_at }}</b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >
                                 <v-icon>more_vert</v-icon>
                                 </v-btn>
                             <v-list>
-                            <v-list-tile  @click.prevent="seteditData(props.row); editDialog = true">
+                            <v-list-tile  @click.prevent="seteditData(props.row); editDialog = true;typeInput = 'edit'" v-if="props.row.status != 3">
                                 <v-list-tile-title  >Perbaharui</v-list-tile-title>
                             </v-list-tile>
-                            <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true">
+                            <v-list-tile @click.prevent="updateStatus(props.row)" v-if="props.row.status != 0">
+                                <v-list-tile-title ><span v-if="props.row.status < 2">Pengerjaan Selesai</span><span v-else>Pengerjaan Diperpanjang</span></v-list-tile-title>
+                            </v-list-tile>
+                            <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true" v-if="props.row.status != 3">
                                 <v-list-tile-title >Hapus</v-list-tile-title>
                             </v-list-tile>
                             </v-list>
@@ -100,44 +106,27 @@
                                 >
                               <v-card>
                                 <v-card-title>
-                                    Tambahkan Pegawai
+                                    Buat Transaksi Baru
                                 </v-card-title>
                                 <v-card-text>
                                       <v-flex xs12>
-                                        <v-text-field label="Nama*" required v-model="editData.nama" :rules="[rules.required, rules.textOnly]"></v-text-field>
+                                        <v-text-field label="Nama Konsumen*" required v-model="editData.namaKonsumen" :rules="[rules.required, rules.textOnly]"></v-text-field>
                                       </v-flex>
                                         <v-flex xs12>
-                                        <v-text-field label="Nomor Handphone*" required v-model="editData.no_telp" :rules="[rules.required, rules.numberOnly]"></v-text-field>
+                                        <v-text-field label="Nomor Handphone Konsumen*" required v-model="editData.nomorKonsumen" :rules="[rules.required, rules.numberOnly]"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        <v-text-field label="Alamat*" required v-model="editData.alamat" :rules="[rules.required]"></v-text-field>
+                                        <v-text-field label="Alamat Konsumen*" required v-model="editData.alamatKonsumen" :rules="[rules.required]"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        <v-text-field label="Gaji*" type="number" required v-model="editData.gaji" :rules="[rules.required, rules.numberOnly]"></v-text-field>
-                                      </v-flex>
-                                      <v-flex xs12>
-                                            <v-select
-                                            :items="roles"
-                                            label="Peran"
-                                            outline
-                                            v-model="editData.role"
-                                            ></v-select>
-                                        </v-flex>
-                                      <v-flex xs12>
-                                        <v-text-field label="Username*" v-model="editData.username" :rules="[rules.required]" v-if="editData.role != 'montir' && editData.role != null" ></v-text-field>
-                                      </v-flex>
-                                      <v-flex xs12>
-                                        <v-text-field label="Password*"  type="password" v-model="editData.password" :rules="[rules.required]" v-if="editData.role != 'montir' && editData.role != null && (typeInput != 'edit' || saveRole == 'montir')"></v-text-field>
-                                      </v-flex>
-                                      <v-flex xs12 v-if="saveRole != 'montir' && editData.role != 'montir'">
-                                        <v-checkbox
-                                          label="Ubah Password ?"
-                                          v-model="editData.changePassword"
-                                          v-if="typeInput == 'edit' && editData.username != null"
-                                          ></v-checkbox>
-                                      </v-flex>
-                                      <v-flex xs12>
-                                        <v-text-field label="Password baru*"  type="password" v-model="editData.password" :rules="[rules.required]" v-if="editData.changePassword"></v-text-field>
+                                             <v-autocomplete
+                                                :items="jt"
+                                                item-text="name"
+                                                item-value="initials"
+                                                label="Jenis Transaksi"
+                                                :rules="[rules.required]"
+                                                v-model="editData.jenisTransaksi"
+                                              ></v-autocomplete>
                                       </v-flex>
                                   <small>*Wajib diisi</small>
                                 </v-card-text>
@@ -174,12 +163,16 @@
 <script>
 export default {
   mounted () {
-    this.$parent.tab = 'branchD1'
+    this.$parent.tab = 'branchD3'
     this.getData()
+    this.getRoles()
+    this.getCities()
   },
   data () {
     return {
+      idCabang: localStorage.getItem('idCabang'),
       load: false,
+      cities: [],
       valid: true,
       typeInput: 'new',
       role: 'semua',
@@ -190,24 +183,30 @@ export default {
       dialog: false,
       deleteDialog: false,
       editDialog: false,
-      data: {
-        nama: null,
-        namaEvent: null,
-        username: null
-      },
       snackbar: false,
       text: '',
       color: null,
       reset: false,
+      jt: [
+        {
+          initials: 'SV',
+          name: 'Service'
+        },
+        {
+          initials: 'SP',
+          name: 'Sparepart'
+        },
+        {
+          initials: 'SS',
+          name: 'Service & Sparepart'
+        }
+      ],
       editData: {
-        nama: '',
-        username: null,
-        role: null,
-        password: '',
-        no_telp: '',
-        alamat: '',
-        gaji: 0,
-        changePassword: false
+        namaKonsumen: '',
+        role: 'konsumen',
+        nomorKonsumen: '',
+        alamatKonsumen: '',
+        jenisTransaksi: ''
       },
       deleteId: -1,
       loading: false,
@@ -217,10 +216,10 @@ export default {
       defaultSortDirection: 'desc',
       currentPage: 1,
       perPage: 10,
-      roles: ['cs','kasir','montir'],
-      usernameRules: [
-        v => !!v || 'Username tidak boleh kosong',
-        v => /.+@.+/.test(v) || 'Username tidak valid'
+      roles: [],
+      emailRules: [
+        v => !!v || 'Email tidak boleh kosong',
+        v => /.+@.+/.test(v) || 'Email tidak valid'
       ],
       rules: {
         required: value => !!value || 'Data ini tidak boleh kosong',
@@ -231,69 +230,84 @@ export default {
   },
   computed: {
     usersList () {
-      if (this.users.length > 0) {
+      if (this.users.length) {
         return this.users.filter((row, index) => {
-            if (this.search !== '') return row.nama.toLowerCase().includes(this.search.toLowerCase()) || row.user.username.toLowerCase().includes(this.search.toLowerCase()) || row.no_telp.toLowerCase().includes(this.search.toLowerCase())
-            return true
+          var data = row.nomor_transaksi + '-' + row.id
+          if (this.search !== '') return data.toLowerCase().includes(this.search.toLowerCase()) || row.namaKonsumen.toLowerCase().includes(this.search.toLowerCase())
+          return true
         })
       }
     }
   },
   methods: {
-    convertPrice (value) {
-      const formatter = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 2
+    gotoRoute (nomor_transaksi, id) {
+      var tN = nomor_transaksi.split('-')
+      this.$router.push({name: 'TransaksiDetail', params: {TransaksiType: tN[0], nomor_transaksi: tN[1], idTransaksi: id}})
+    },
+    citiesFilter (item, queryText, itemText) {
+      const textOne = item.name.toLowerCase()
+      const searchText = queryText.toLowerCase()
+      return textOne.indexOf(searchText) > -1
+    },
+    getCities () {
+      var uri = '/api/cities'
+      axios.get(uri).then(response => {
+        this.cities = response.data
       })
-      return formatter.format(value)
     },
-    seteditData (data) {
-      this.typeInput = 'edit'
-      this.editData.id = data.id
-      this.editData.nama = data.nama
-      this.editData.no_telp = data.no_telp
-      this.editData.alamat = data.alamat
-      this.editData.gaji = data.gaji
-      if (data.user !== null) {
-        this.editData.role = data.user.role.name
-        this.editData.username = data.user.username
-          this.editData.user_id = data.user_id
-      } else {
-        this.editData.role = 'montir'
-        this.editData.user_id = -1
-      }
-      this.saveRole = this.editData.role
-    },
-    resetData () {
-      this.$refs.form.reset()
-      this.typeInput = 'new'
-      this.editData.role = null
-      this.editData.username = null
-      this.saveRole = ''
-      this.load = false
-    },
-    deleteData () {
+    getRoles () {
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
+      var uri = '/api/role'
+      axios.get(uri, config).then(response => {
+        this.roles = response.data
+      })
+    },
+    setDataCustomer (data) {
+      this.editData.customerId = data.id
+      this.editData.namaKonsumen = data.namaKonsumen
+      this.editData.nomorKonsumen = data.nomorKonsumen
+      this.editData.alamatKonsumen = data.alamatKonsumen
+      this.editData.city = data.city
+    },
+    seteditData (data) {
+      this.editData.id = data.id
+      this.editData.customerId = data.id
+      this.editData.namaKonsumen = data.namaKonsumen
+      this.editData.nomorKonsumen = data.nomorKonsumen
+      this.editData.alamatKonsumen = data.alamatKonsumen
+      var typeTransaksi = data.nomor_transaksi.split('-')
+      this.editData.jenisTransaksi = typeTransaksi[0]
+    },
+    resetData () {
+      this.$refs.form.reset()
+      this.typeInput = 'new'
+      this.editData.role = null
+      this.editData.email = null
+      this.saveRole = ''
+      this.load = false
+    },
+    deleteData () {
       this.load = true
-      var uri = '/api/pegawai/' + this.deleteId
+      var config = {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      }
+      var uri = '/api/transaksi/' + this.deleteId
       axios.delete(uri, config).then(response => {
         this.snackbar = true
         this.text = 'Data berhasil dihapus'
         this.color = 'green'
-        this.deleteDialog = false
-        this.load = false
         this.getData()
       }).catch(error => {
         console.log(error)
         this.snackbar = true
         this.text = 'Coba Lagi'
         this.color = 'red'
-        this.deleteDialog = false
         this.load = false
       })
     },
@@ -304,20 +318,15 @@ export default {
         this.color = 'error'
         return
       }
-      if (this.editData.role === null) {
-        this.snackbar = true
-        this.text = 'Mohon untuk menentukan peran dari pegawai anda'
-        this.color = 'error'
-        return
-      }
+      this.editData.role = 'konsumen'
       this.load = true
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      var uri = '/api/pegawai'
-      this.editData.branch = this.$route.params.idCabang
+      var uri = '/api/transaksi'
+      this.editData.idCabang = this.idCabang
       axios.post(uri, this.editData, config).then(response => {
         this.resetData()
         this.getData()
@@ -325,51 +334,41 @@ export default {
         console.log(error.response)
         this.load = false
         this.snackbar = true
-        this.text = error.response.data.errors.no_telp[0]
-        this.color = 'red'
+        this.color = 'error'
+        this.text = error.response.data.errors.nomorKonsumen[0]
       })
     },
     UpdateData () {
-      if (!this.$refs.form.validate()) {
-        this.snackbar = true
-        this.text = 'Mohon untuk melengkapi form yang tersedia'
-        this.color = 'error'
-        return
-      }
-      if (this.editData.role === null) {
-        this.snackbar = true
-        this.text = 'Mohon untuk menentukan peran dari pegawai anda'
-        this.color = 'error'
-        return
-      }
-      this.load = true
+      var uri
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      var uri = '/api/pegawai/' + this.editData.id
-      this.editData.branch = this.$route.params.idCabang
+      this.editData.role = 'konsumen'
+      this.load = true
+      uri = '/api/updateTransaksi/' + this.editData.id
       axios.post(uri, this.editData, config).then(response => {
-        this.resetData()
+        console.log(response)
         this.getData()
       }).catch(error => {
-        console.log(error.response)
+        console.log(error)
         this.snackbar = true
-        this.text = error.response.data.errors.no_telp[0]
-        this.color = 'error'
+        this.text = 'Coba Lagi'
+        this.color = 'red'
         this.load = false
       })
     },
     getData () {
       this.editDialog = false
       this.deleteDialog = false
+      this.load = false
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      var uri = '/api/employeebyCabang/' + this.$route.params.idCabang
+      var uri = '/api/transaksiByBranch/' + this.idCabang
       axios.get(uri, config).then(response => {
         this.users = response.data
         this.loadData = false

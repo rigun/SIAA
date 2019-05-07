@@ -16,8 +16,10 @@ class CreatePemesanansTable extends Migration
         Schema::create('pemesanans', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('status');
-            $table->unsignedBigInteger('id_sales');
+            $table->unsignedBigInteger('id_cabang');
+            $table->unsignedBigInteger('id_sales')->nullable();
             $table->unsignedBigInteger('id_supplier');
+            $table->foreign('id_cabang')->references('id')->on('cabangs');
             $table->foreign('id_sales')->references('id')->on('sales');
             $table->foreign('id_supplier')->references('id')->on('suppliers');
             $table->timestamps();

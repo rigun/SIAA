@@ -23,6 +23,10 @@ class PegawaiController extends Controller
     {
         return Pegawai::where('id_cabang',$branch_id)->with(['user'])->orderBy('created_at','desc')->get();
     }
+    public function showMontirByBranch($branch_id)
+    {
+        return Pegawai::where([['id_cabang',$branch_id],['user_id',null]])->orderBy('created_at','desc')->get();
+    }
     public function show($id)
     {
         return Pegawai::where('id',$id)->with(['detail','branch'])->first();

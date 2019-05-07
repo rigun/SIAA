@@ -11,4 +11,7 @@ class Sparepart extends Model
     public function kendaraan(){
         return $this->belongsToMany('App\Motor','sparepart_kendaraans','kode_sparepart','id_kendaraan');
     }
+    public function supplier(){
+        return $this->belongsTo('App\Supplier','id_supplier','id');
+    }
 }

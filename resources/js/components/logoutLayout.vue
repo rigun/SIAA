@@ -11,6 +11,7 @@
             localStorage.removeItem('status')
             localStorage.removeItem('id')
             localStorage.removeItem('name')
+            localStorage.removeItem('idCabang')
             store.commit('logoutUser')
             this.$router.push({ name: 'LoginLayout' })
         }

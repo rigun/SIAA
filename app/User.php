@@ -21,6 +21,9 @@ class User extends Authenticatable implements JWTSubject
     public function detail(){
         return $this->belongsTo('App\Pegawai','id','user_id');
     }
+    public function pegawai(){
+        return $this->belongsTo('App\Pegawai','user_id','id');
+    }
     public function getJWTIdentifier()
     {
       return $this->getKey();
